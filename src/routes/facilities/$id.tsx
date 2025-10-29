@@ -3,10 +3,9 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react';
 import { Users, ArrowLeft } from 'lucide-react';
 import Header from '@/components/Header';
-import { queryOptions, useSuspenseQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { queryOptions, useSuspenseQuery, useMutation } from '@tanstack/react-query'
 import Placeholder from '@/visuals/placeholder.jpg'
 import { getAccessToken } from '@/auth';
-import { apiFetch } from '@/api/client'
 
 
 
@@ -58,8 +57,6 @@ function RouteComponent() {
   const { id } = Route.useParams()
   const { data } = useSuspenseQuery(facilityQuery(id))
   const user = useSuspenseQuery(userQuery())
-
-  const qc = useQueryClient()
 
   const [selectedDay, setSelectedDay] = useState('');
   const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
@@ -123,7 +120,7 @@ const mutation = useMutation({
 
   return (
     <div className="min-h-screen bg-background">
-      <Header isAdmin={user?.data?.isAdmin} token={getAccessToken()} />
+      <Header isAdmin={user?.data?.isAdmin} />
 
       <div className="container mx-auto px-4 py-8">
         <i className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6">

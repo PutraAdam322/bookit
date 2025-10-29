@@ -61,7 +61,7 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header isAdmin = {user.data.isAdmin} token={getAccessToken()} />
+      <Header isAdmin = {user.data.isAdmin} />
       
       <div className="container mx-auto px-8 py-8">
         <div className="mb-8">

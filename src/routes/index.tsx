@@ -11,7 +11,7 @@ function App() {
 
   return (
     <div className="min-h-screen">
-      <Header isAdmin={false} token="null" />
+      <Header isAdmin={false} />
       
       <section className="bg-linear-to-b from-gray-50 to-gray-200 py-20">
         <div className="container mx-auto px-4">

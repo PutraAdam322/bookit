@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client'
 import { RouterProvider, createRouter } from '@tanstack/react-router'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './queryClient'
+import NotFound from './components/NotFound.tsx'
 
 // Import the generated route tree
 import { routeTree } from './routeTree.gen'
@@ -18,6 +19,9 @@ const router = createRouter({
   scrollRestoration: true,
   defaultStructuralSharing: true,
   defaultPreloadStaleTime: 0,
+  defaultNotFoundComponent: () => {
+    return (<NotFound />);
+  },
 })
 
 // Register the router instance for type safety

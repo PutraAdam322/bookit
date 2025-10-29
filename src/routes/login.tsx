@@ -23,8 +23,8 @@ function RouteComponent() {
       try { queryClient.invalidateQueries() } catch {}
       navigate({ to: '/' })
     },
-    onError: () => {
-      navigate({to:'/login'})
+    onError: (data) => {
+      navigate({to: "/login"})
     }
   })
   
@@ -34,7 +34,6 @@ function RouteComponent() {
     const email = String(fd.get('email') ?? '')
     const password = String(fd.get('password') ?? '')
     mutation.mutate({ email, password })
-    navigate({to: "/"})
   }
 
   return (

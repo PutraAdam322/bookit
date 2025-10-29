@@ -1,20 +1,18 @@
+import { getAccessToken } from '@/auth';
 import { useNavigate } from '@tanstack/react-router';
 import { User, LogOut, Building2 } from 'lucide-react';
 
 interface HeaderProps {
   isAdmin: boolean
-  token: string
 }
 
 
 
-export default function Header({ isAdmin, token }: HeaderProps) {
+export default function Header({ isAdmin }: HeaderProps) {
   const locationPath = typeof window !== 'undefined' ? window.location.pathname : '';
   const navigate = useNavigate();
-  const isToken  = () => {
-    return token != "null"
-  }
-  console.log(isToken())
+  const token = getAccessToken()
+  const isToken  = () => {return (token != "null" && token != "")}
 
   return (
     <header className="border-b border-border bg-card">
@@ -81,16 +79,7 @@ export default function Header({ isAdmin, token }: HeaderProps) {
           </nav>
 
           <div className="flex items-center gap-2">
-            {isAdmin ? (
-              <>
-                <button className="p-2 hover:bg-accent rounded-lg transition-colors">
-                  <User className="h-5 w-5" />
-                </button>
-                <button className="p-2 hover:bg-accent rounded-lg transition-colors">
-                  <LogOut className="h-5 w-5" />
-                </button>
-              </>
-            ) : (
+            {!isToken ? (
               <>
                 <a href="/login">
                   <button className="px-4 py-2 hover:bg-accent rounded-lg transition-colors">
@@ -102,6 +91,15 @@ export default function Header({ isAdmin, token }: HeaderProps) {
                     Sign Up
                   </button>
                 </a>
+              </>
+            ) : (
+              <>
+                <button className="p-2 hover:bg-accent rounded-lg transition-colors">
+                  <User className="h-5 w-5" />
+                </button>
+                <button className="p-2 hover:bg-accent rounded-lg transition-colors">
+                  <LogOut className="h-5 w-5" />
+                </button>
               </>
             )}
           </div>

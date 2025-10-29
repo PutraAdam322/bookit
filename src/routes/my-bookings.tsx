@@ -3,6 +3,8 @@ import { useState } from 'react';
 import { Calendar, Clock } from 'lucide-react';
 import Header from '@/components/Header';
 import BookingCard from '@/components/BookingCard';
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import { getAccessToken } from '@/auth';
 
 const MOCK_BOOKINGS = [
   {
@@ -57,19 +59,37 @@ const MOCK_BOOKINGS = [
   },
 ];
 
+const userQuery = () => queryOptions({
+  queryKey: ['user'],
+  queryFn: async () => {
+    const token = getAccessToken()
+    const res = await fetch(`http://localhost:8080/api/v1/users/bookings`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+    })
+    if (!res.ok) throw new Error('Unauthorized')
+    return res.json()
+  },
+})
+
 export const Route = createFileRoute('/my-bookings')({
   component: RouteComponent,
 })
 
 function RouteComponent() {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
-  const [bookings] = useState(MOCK_BOOKINGS);
+  //const [bookings] = useState(MOCK_BOOKINGS);
 
-  const upcomingBookings = bookings.filter(
-    (b) => b.status === 'confirmed' || b.status === 'pending'
+  const { data } = useSuspenseQuery(userQuery())
+
+  const upcomingBookings = data.bookings.filter(
+    (b : any) => new Date(b.created_at) > new Date()
   );
-  const pastBookings = bookings.filter(
-    (b) => b.status === 'cancelled' || new Date(b.date) < new Date()
+  const pastBookings = data.bookings.filter(
+    (b : any) => new Date(b.created_at) < new Date()
   );
 
   const handleCancelBooking = (id: string) => {
@@ -78,7 +98,7 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header userRole="user" />
+      <Header isAdmin={false} />
       
       <div className="container mx-auto px-4 py-8">
         <div className="mb-8">
@@ -88,7 +108,6 @@ function RouteComponent() {
           </p>
         </div>
 
-        {/* Tabs */}
         <div className="mb-6 border-b border-border">
           <div className="flex gap-4">
             <button
@@ -116,7 +135,6 @@ function RouteComponent() {
           </div>
         </div>
 
-        {/* Tab Content */}
         {activeTab === 'upcoming' && (
           <div className="space-y-4">
             {upcomingBookings.length === 0 ? (
@@ -129,7 +147,7 @@ function RouteComponent() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {upcomingBookings.map((booking) => (
+                {upcomingBookings.map((booking : any) => (
                   <BookingCard
                     key={booking.id}
                     {...booking}
@@ -154,7 +172,7 @@ function RouteComponent() {
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {pastBookings.map((booking) => (
+                {pastBookings.map((booking : any) => (
                   <BookingCard key={booking.id} {...booking} />
                 ))}
               </div>
