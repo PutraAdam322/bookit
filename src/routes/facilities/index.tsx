@@ -1,10 +1,12 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useState } from 'react';
 import Header from '@/components/Header';
 import VenueCard from '@/components/VenueCard';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { getAccessToken } from '@/auth';
+
+
 
 const facilitiesQuery = queryOptions({
   queryKey: ['facilities'],
@@ -29,6 +31,7 @@ const facilitiesQuery = queryOptions({
 const userQuery = () => queryOptions({
   queryKey: ['user'],
   queryFn: async () => {
+    const navigate = useNavigate()
     const token = getAccessToken()
     const res = await fetch(`http://localhost:8080/api/v1/users`, {
       method: 'GET',
@@ -37,7 +40,6 @@ const userQuery = () => queryOptions({
         'Authorization': token,
       },
     })
-    if (!res.ok) throw new Error('Unauthorized')
     return res.json()
   },
 })
@@ -61,7 +63,7 @@ function RouteComponent() {
 
   return (
     <div className="min-h-screen bg-background">
-      <Header isAdmin = {user.data.isAdmin} />
+      <Header isAdmin = {user.data?.isAdmin} />
       
       <div className="container mx-auto px-8 py-8">
         <div className="mb-8">

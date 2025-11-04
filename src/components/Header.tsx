@@ -8,11 +8,14 @@ interface HeaderProps {
 
 
 
+
+const isToken  = (token:string) => {return (token != "null")}
+
 export default function Header({ isAdmin }: HeaderProps) {
   const locationPath = typeof window !== 'undefined' ? window.location.pathname : '';
   const navigate = useNavigate();
-  const token = getAccessToken()
-  const isToken  = () => {return (token != "null" && token != "")}
+  const token:boolean = isToken(getAccessToken())
+  //console.log(token)
 
   return (
     <header className="border-b border-border bg-card">
@@ -20,7 +23,7 @@ export default function Header({ isAdmin }: HeaderProps) {
         <div className="flex items-center justify-between">
           <a href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
             <Building2 className="h-6 w-6" />
-            <span className="font-medium">VenueBook</span>
+            <span className="font-medium">Bookit</span>
           </a>
 
           <nav className="hidden md:flex items-center gap-6">
@@ -35,7 +38,7 @@ export default function Header({ isAdmin }: HeaderProps) {
                 >
                   Browse Venues
                 </a>
-                {!isAdmin && isToken() && (
+                {!isAdmin && token && (
                   <a
                     href="/my-bookings"
                     className={`hover:text-primary transition-colors ${
@@ -79,7 +82,7 @@ export default function Header({ isAdmin }: HeaderProps) {
           </nav>
 
           <div className="flex items-center gap-2">
-            {!isToken ? (
+            {!token ? (
               <>
                 <a href="/login">
                   <button className="px-4 py-2 hover:bg-accent rounded-lg transition-colors">

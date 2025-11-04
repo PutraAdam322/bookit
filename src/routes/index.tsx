@@ -42,11 +42,6 @@ function App() {
                   Browse All Venues
                 </button>
               </i>
-              <i>
-                <button className="px-6 py-3 border border-border rounded-lg hover:bg-accent transition-colors">
-                  Get Started
-                </button>
-              </i>
             </div>
           </div>
         </div>

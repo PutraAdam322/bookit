@@ -114,7 +114,7 @@ const mutation = useMutation({
       return;
     }
 
-    const totalPrice = data.price; // or calculate based on duration
+    const totalPrice = data.price;
     mutation.mutate({ bookingslotId: selectedSlotId, totalPrice });
   };
 

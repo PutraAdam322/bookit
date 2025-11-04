@@ -1,6 +1,8 @@
 import { Calendar, Clock, Users } from 'lucide-react';
+import type { BookingSlot, Booking } from '@/interface/interface';
+import { getAccessToken } from '@/auth';
 
-interface BookingCardProps {
+/*interface BookingCardProps {
   id: string;
   venueName: string;
   date: string;
@@ -13,37 +15,44 @@ interface BookingCardProps {
   onCancel?: (id: string) => void;
   onApprove?: (id: string) => void;
   onReject?: (id: string) => void;
+}*/
+const getTime = (datetime:string) => {
+  const [, tmp] = datetime.split("T");
+  const [h, ] = tmp.split("+");
+  return h.slice(0,5);
+}
+
+const getDate = (datetime:string) => {
+  const [tmp, ] = datetime.split("T");
+  const [y, m, d ] = tmp.split("-");
+  return `${d}-${m}-${y}`;
 }
 
 export default function BookingCard({
-  id,
-  venueName,
-  date,
-  startTime,
-  endTime,
-  attendees,
-  status,
-  showActions = false,
-  onCancel,
-  onApprove,
-  onReject,
-}: BookingCardProps) {
+booking_slot, status, showActions, onApprove, onCancel, onReject, id}: Booking) {
   const statusColors = {
     pending: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400',
     confirmed: 'bg-green-500/10 text-green-700 dark:text-green-400',
     cancelled: 'bg-red-500/10 text-red-700 dark:text-red-400',
-  };
+  }
+
+  const startTime = ((booking_slot.end_time));
+  const endTime= ((booking_slot.start_time));
+  const h0 = getTime(startTime);
+  const h1 = getTime(endTime);
+  const date = getDate(startTime)
+
 
   return (
     <div className="rounded-lg border border-border bg-card">
       <div className="p-4 pb-3">
         <div className="flex items-start justify-between">
           <div>
-            <h3>{venueName}</h3>
+            <h3>{booking_slot.facility.name}</h3>
           </div>
-          <span className={`px-3 py-1 rounded-md text-sm ${statusColors[status]}`}>
+          {<span className={`px-3 py-1 rounded-md text-sm ${statusColors[status]}`}>
             {status.charAt(0).toUpperCase() + status.slice(1)}
-          </span>
+          </span>}
         </div>
       </div>
       
@@ -56,33 +65,33 @@ export default function BookingCard({
           
           <div className="flex items-center gap-2 text-muted-foreground">
             <Clock className="h-4 w-4" />
-            <span className="text-sm">{startTime} - {endTime}</span>
+            <span className="text-sm">{h1} - {h0}</span>
           </div>
           
           <div className="flex items-center gap-2 text-muted-foreground">
             <Users className="h-4 w-4" />
-            <span className="text-sm">{attendees} attendees</span>
+            <span className="text-sm">{booking_slot.facility.capacity} Capacity</span>
           </div>
         </div>
 
         {showActions && (
           <div className="flex gap-2 mt-4">
-            {status === 'pending' && onApprove && onReject && (
+            {/*status === 'pending' && onApprove && onReject && (
               <>
                 <button
                   className="flex-1 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
-                  onClick={() => onApprove(id)}
+                  //onClick={() => onApprove(id)}
                 >
                   Approve
                 </button>
                 <button
                   className="flex-1 px-3 py-2 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90 transition-opacity"
-                  onClick={() => onReject(id)}
+                  //onClick={() => onReject(id)}
                 >
                   Reject
                 </button>
               </>
-            )}
+            )*/}
             
             {status === 'confirmed' && onCancel && (
               <button
