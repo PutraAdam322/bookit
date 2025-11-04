@@ -1,4 +1,4 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
 import Header from '@/components/Header';
 import VenueCard from '@/components/VenueCard';
@@ -11,7 +11,7 @@ import { getAccessToken } from '@/auth';
 const facilitiesQuery = queryOptions({
   queryKey: ['facilities'],
   queryFn: async () => {
-    const res = await fetch('http://localhost:8080/api/v1/facilities', {
+    const res = await fetch('https://bookit-backend-d4l7.onrender.com/api/v1/facilities', {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -31,9 +31,8 @@ const facilitiesQuery = queryOptions({
 const userQuery = () => queryOptions({
   queryKey: ['user'],
   queryFn: async () => {
-    const navigate = useNavigate()
     const token = getAccessToken()
-    const res = await fetch(`http://localhost:8080/api/v1/users`, {
+    const res = await fetch(`https://bookit-backend-d4l7.onrender.com/api/v1/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',

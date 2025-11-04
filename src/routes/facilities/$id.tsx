@@ -14,7 +14,7 @@ const facilityQuery = (id: string) => queryOptions({
   queryKey: ['facility', id],
   queryFn: async ({ signal }: { signal?: AbortSignal }) => {
     const token = getAccessToken()
-    const res = await fetch(`http://localhost:8080/api/v1/facilities/${id}`, {
+    const res = await fetch(`https://bookit-backend-d4l7.onrender.com/api/v1/facilities/${id}`, {
       method: 'GET',
       signal,
       headers: {
@@ -34,7 +34,7 @@ const userQuery = () => queryOptions({
   queryKey: ['user'],
   queryFn: async () => {
     const token = getAccessToken()
-    const res = await fetch(`http://localhost:8080/api/v1/users`, {
+    const res = await fetch(`https://bookit-backend-d4l7.onrender.com/api/v1/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
