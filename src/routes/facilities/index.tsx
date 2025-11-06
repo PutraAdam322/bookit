@@ -56,10 +56,6 @@ export const Route = createFileRoute('/facilities/')({
 
 function RouteComponent() {
   const [searchQuery, setSearchQuery] = useState('');
-  const [sortBy, setSortBy] = useState('rating');
-  const [showFilters, setShowFilters] = useState(false);
-  const [maxPrice, setMaxPrice] = useState(300);
-  const [selectedCapacity, setSelectedCapacity] = useState('all');
   const { data } = useSuspenseQuery(facilitiesQuery)
 
   const user = useSuspenseQuery(userQuery())
@@ -89,12 +85,10 @@ function RouteComponent() {
           </div>
         </div>
 
-        {/* Results Count */}
         <div className="mb-4 text-sm text-muted-foreground">
           Showing {data.length} venues
         </div>
 
-        {/* Venue Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {data.map((d: any) => (
             <VenueCard key={d.id} {...d} />

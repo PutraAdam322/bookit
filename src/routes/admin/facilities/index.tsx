@@ -1,12 +1,35 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { useSuspenseQuery, queryOptions } from '@tanstack/react-query';
 import { Building2 } from 'lucide-react';
 import Header from '@/components/Header';
+import VenueCard from '@/components/VenueCard';
 
 export const Route = createFileRoute('/admin/facilities/')({
   component: RouteComponent,
 })
 
+const facilitiesQuery = queryOptions({
+  queryKey: ['facilities'],
+  queryFn: async () => {
+    const res = await fetch('https://bookit-backend-d4l7.onrender.com/api/v1/facilities', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    if (!res.ok) throw new Error('Failed to fetch facilities')
+    const body = await res.json().catch(() => null)
+
+    if (Array.isArray(body)) return body
+    if (!body) return [] // no body
+
+    return body.data ?? body.facilities ?? body.items ?? body.results ?? []
+  },
+})
+
 function RouteComponent() {
+  const { data } = useSuspenseQuery(facilitiesQuery)
+
   return(
     <div className="min-h-screen bg-background">
       <Header isAdmin = {true}/>
@@ -32,9 +55,14 @@ function RouteComponent() {
                         <div className="flex items-center justify-between">
                           <h3>All Facilities</h3>
                         </div>
-                      </div>
-                      <div className="p-6 pt-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        
+                        <div className="mb-4 text-sm text-muted-foreground">
+                          Showing {data.length} venues
+                        </div>
+                        <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {data.map((d: any) => (
+                            <VenueCard key={d.id} {...d} />
+                          ))}
+                        </div>
                       </div>
                     </div>
                   </div>

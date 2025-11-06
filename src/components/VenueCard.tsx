@@ -17,6 +17,7 @@ export default function VenueCard({
   price,
   available,
 }: VenueCardProps) {
+  const locationPath = typeof window !== 'undefined' ? window.location.pathname : '';
   const navigate = useNavigate();
 
   return (
@@ -57,7 +58,7 @@ export default function VenueCard({
       <div className="p-4 pt-0">
         <i className="block w-full">
           <button 
-            className={`w-full px-4 py-2 rounded-lg transition-opacity ${
+            className={`${locationPath === '/admin/facilities' ? 'w-32' : 'w-full'} px-4 py-2 rounded-lg transition-opacity ${
               available 
                 ? 'bg-primary text-primary-foreground hover:opacity-90' 
                 : 'bg-muted text-muted-foreground cursor-not-allowed'
@@ -65,7 +66,7 @@ export default function VenueCard({
             disabled={!available}
             onClick={() => navigate({to: `/facilities/${id}`})}
           >
-            {available ? 'View Details' : 'Unavailable'}
+            {locationPath === '/admin/facilities' ? 'Edit' : (available ? 'View Details' : 'Unavailable')}
           </button>
         </i>
       </div>

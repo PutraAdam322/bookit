@@ -62,7 +62,7 @@ function RouteComponent() {
   const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
   const navigate = useNavigate();
 
-  if(data.status === 401){
+  if(data.status === 401 || data.status === 400){
     navigate({to:"/login"})
   }
 
