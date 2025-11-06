@@ -13,7 +13,9 @@ import { Route as MyBookingsRouteImport } from './routes/my-bookings'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as FacilitiesIndexRouteImport } from './routes/facilities/index'
+import { Route as AdminIndexRouteImport } from './routes/admin/index'
 import { Route as FacilitiesIdRouteImport } from './routes/facilities/$id'
+import { Route as AdminFacilitiesIndexRouteImport } from './routes/admin/facilities/index'
 
 const MyBookingsRoute = MyBookingsRouteImport.update({
   id: '/my-bookings',
@@ -35,9 +37,19 @@ const FacilitiesIndexRoute = FacilitiesIndexRouteImport.update({
   path: '/facilities/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AdminIndexRoute = AdminIndexRouteImport.update({
+  id: '/admin/',
+  path: '/admin/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const FacilitiesIdRoute = FacilitiesIdRouteImport.update({
   id: '/facilities/$id',
   path: '/facilities/$id',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AdminFacilitiesIndexRoute = AdminFacilitiesIndexRouteImport.update({
+  id: '/admin/facilities/',
+  path: '/admin/facilities/',
   getParentRoute: () => rootRouteImport,
 } as any)
 
@@ -46,14 +58,18 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/my-bookings': typeof MyBookingsRoute
   '/facilities/$id': typeof FacilitiesIdRoute
+  '/admin': typeof AdminIndexRoute
   '/facilities': typeof FacilitiesIndexRoute
+  '/admin/facilities': typeof AdminFacilitiesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/login': typeof LoginRoute
   '/my-bookings': typeof MyBookingsRoute
   '/facilities/$id': typeof FacilitiesIdRoute
+  '/admin': typeof AdminIndexRoute
   '/facilities': typeof FacilitiesIndexRoute
+  '/admin/facilities': typeof AdminFacilitiesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -61,20 +77,38 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/my-bookings': typeof MyBookingsRoute
   '/facilities/$id': typeof FacilitiesIdRoute
+  '/admin/': typeof AdminIndexRoute
   '/facilities/': typeof FacilitiesIndexRoute
+  '/admin/facilities/': typeof AdminFacilitiesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/my-bookings' | '/facilities/$id' | '/facilities'
+  fullPaths:
+    | '/'
+    | '/login'
+    | '/my-bookings'
+    | '/facilities/$id'
+    | '/admin'
+    | '/facilities'
+    | '/admin/facilities'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/my-bookings' | '/facilities/$id' | '/facilities'
+  to:
+    | '/'
+    | '/login'
+    | '/my-bookings'
+    | '/facilities/$id'
+    | '/admin'
+    | '/facilities'
+    | '/admin/facilities'
   id:
     | '__root__'
     | '/'
     | '/login'
     | '/my-bookings'
     | '/facilities/$id'
+    | '/admin/'
     | '/facilities/'
+    | '/admin/facilities/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -82,7 +116,9 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   MyBookingsRoute: typeof MyBookingsRoute
   FacilitiesIdRoute: typeof FacilitiesIdRoute
+  AdminIndexRoute: typeof AdminIndexRoute
   FacilitiesIndexRoute: typeof FacilitiesIndexRoute
+  AdminFacilitiesIndexRoute: typeof AdminFacilitiesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -115,11 +151,25 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof FacilitiesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/admin/': {
+      id: '/admin/'
+      path: '/admin'
+      fullPath: '/admin'
+      preLoaderRoute: typeof AdminIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/facilities/$id': {
       id: '/facilities/$id'
       path: '/facilities/$id'
       fullPath: '/facilities/$id'
       preLoaderRoute: typeof FacilitiesIdRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/admin/facilities/': {
+      id: '/admin/facilities/'
+      path: '/admin/facilities'
+      fullPath: '/admin/facilities'
+      preLoaderRoute: typeof AdminFacilitiesIndexRouteImport
       parentRoute: typeof rootRouteImport
     }
   }
@@ -130,7 +180,9 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   MyBookingsRoute: MyBookingsRoute,
   FacilitiesIdRoute: FacilitiesIdRoute,
+  AdminIndexRoute: AdminIndexRoute,
   FacilitiesIndexRoute: FacilitiesIndexRoute,
+  AdminFacilitiesIndexRoute: AdminFacilitiesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

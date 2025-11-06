@@ -21,7 +21,7 @@ export async function apiFetch(input: RequestInfo, init?: RequestInit) {
   headers.set('Content-Type', headers.get('Content-Type') ?? 'application/json')
   if (token) headers.set('Authorization', `Bearer ${token}`)
 
-  const url = String(input).startsWith('http') ? input : `http://localhost:8080/api/v1${String(input)}`
+  const url = String(input).startsWith('http') ? input : `https://bookit-backend-d4l7.onrender.com${String(input)}`
   const res = await fetch(url, { ...init, headers })
 
   if (res.status === 401) {
@@ -35,7 +35,7 @@ export async function apiFetch(input: RequestInfo, init?: RequestInit) {
 }
 
 export async function loginApi(email: string, password: string) {
-  const res = await fetch(`http://localhost:8080/api/v1/users/login`, {
+  const res = await fetch(`https://bookit-backend-d4l7.onrender.com/api/v1/users/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({'email': email, 'password': password }),
