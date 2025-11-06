@@ -1,4 +1,5 @@
 import { getAccessToken } from '@/auth';
+import { logoutLocal } from '@/api/client';
 import { useNavigate } from '@tanstack/react-router';
 import { User, LogOut, Building2 } from 'lucide-react';
 
@@ -62,20 +63,12 @@ export default function Header({ isAdmin }: HeaderProps) {
                   Dashboard
                 </a>
                 <a
-                  href="/admin/bookings"
+                  href="/admin/facilities"
                   className={`hover:text-primary transition-colors ${
-                    locationPath === '/admin/bookings' ? 'text-primary' : 'text-muted-foreground'
+                    locationPath === '/admin/facilities' ? 'text-primary' : 'text-muted-foreground'
                   }`}
                 >
-                  Bookings
-                </a>
-                <a
-                  href="/admin/venues/add"
-                  className={`hover:text-primary transition-colors ${
-                    locationPath === '/admin/venues/add' ? 'text-primary' : 'text-muted-foreground'
-                  }`}
-                >
-                  Add Venue
+                  Facilities
                 </a>
               </>
             )}
@@ -101,7 +94,7 @@ export default function Header({ isAdmin }: HeaderProps) {
                   <User className="h-5 w-5" />
                 </button>
                 <button className="p-2 hover:bg-accent rounded-lg transition-colors">
-                  <LogOut className="h-5 w-5" />
+                  <LogOut className="h-5 w-5" onClick={() => logoutLocal()} />
                 </button>
               </>
             )}

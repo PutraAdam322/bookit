@@ -23,7 +23,7 @@ function RouteComponent() {
       try { queryClient.invalidateQueries() } catch {}
       navigate({ to: '/' })
     },
-    onError: (data) => {
+    onError: () => {
       navigate({to: "/login"})
     }
   })

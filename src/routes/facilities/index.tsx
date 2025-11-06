@@ -32,6 +32,9 @@ const userQuery = () => queryOptions({
   queryKey: ['user'],
   queryFn: async () => {
     const token = getAccessToken()
+
+    if (!token) return null
+
     const res = await fetch(`https://bookit-backend-d4l7.onrender.com/api/v1/users`, {
       method: 'GET',
       headers: {
@@ -41,6 +44,7 @@ const userQuery = () => queryOptions({
     })
     return res.json()
   },
+  enabled: !!getAccessToken(),
 })
 
 export const Route = createFileRoute('/facilities/')({
@@ -83,70 +87,7 @@ function RouteComponent() {
               className="w-full pl-10 pr-4 py-2 rounded-lg border border-border bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
             />
           </div>
-          
-          <select 
-            value={sortBy} 
-            onChange={(e) => setSortBy(e.target.value)}
-            className="px-4 py-2 rounded-lg border border-border bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-          >
-            <option value="rating">Highest Rated</option>
-            <option value="price-low">Price: Low to High</option>
-            <option value="price-high">Price: High to Low</option>
-            <option value="capacity">Capacity</option>
-          </select>
-
-          <button 
-            onClick={() => setShowFilters(!showFilters)}
-            className="px-4 py-2 border border-border rounded-lg hover:bg-accent transition-colors flex items-center gap-2"
-          >
-            <SlidersHorizontal className="h-4 w-4" />
-            Filters
-          </button>
         </div>
-
-        {showFilters && (
-          <div className="mb-6 p-6 rounded-lg border border-border bg-card">
-            <div className="flex items-center justify-between mb-4">
-              <h3>Filter Venues</h3>
-              <button 
-                onClick={() => setShowFilters(false)}
-                className="p-1 hover:bg-accent rounded"
-              >
-                <X className="h-5 w-5" />
-              </button>
-            </div>
-            
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="space-y-2">
-                <label>Max Price per Hour: ${maxPrice}</label>
-                <input
-                  type="range"
-                  min="0"
-                  max="500"
-                  step="10"
-                  value={maxPrice}
-                  onChange={(e) => setMaxPrice(parseInt(e.target.value))}
-                  className="w-full"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <label>Capacity</label>
-                <select 
-                  value={selectedCapacity}
-                  onChange={(e) => setSelectedCapacity(e.target.value)}
-                  className="w-full px-3 py-2 rounded-lg border border-border bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
-                >
-                  <option value="all">Any Capacity</option>
-                  <option value="small">Up to 20</option>
-                  <option value="medium">20-50</option>
-                  <option value="large">50-100</option>
-                  <option value="xlarge">100+</option>
-                </select>
-              </div>
-            </div>
-          </div>
-        )}
 
         {/* Results Count */}
         <div className="mb-4 text-sm text-muted-foreground">
