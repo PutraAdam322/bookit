@@ -4,42 +4,51 @@ import { Calendar, Clock } from 'lucide-react';
 import Header from '@/components/Header';
 import BookingCard from '@/components/BookingCard';
 import { queryOptions, useSuspenseQuery, useMutation } from '@tanstack/react-query';
-import { getAccessToken } from '@/auth';
+import { getAccessToken } from '@/utils/utils';
 import type { Booking } from '@/interface/interface';
+import UnauthorizedHandling from '@/components/UnauthorizedHandling';
 
+const url = import.meta.env.VITE_API_URL
 
+const bookingQuery = () => queryOptions({
+  queryKey: ['bookings'],
+  queryFn: async () => {
+    const token = getAccessToken()
+    const res = await fetch(`${url}/api/v1/bookings/mybook`, 
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
+      },
+    })
+    if (!res.ok) {
+      const err = await res.json()
+      throw new Error(err.message)
+    }
+    return res.json()
+  },
+})
 
 export const Route = createFileRoute('/my-bookings')({
   component: RouteComponent,
+  loader: ({ context }) => {
+    return context.queryClient.ensureQueryData(bookingQuery())
+  },
+  errorComponent: ({}) => (
+    <UnauthorizedHandling />
+  ),
 })
 
 function RouteComponent() {
   const [activeTab, setActiveTab] = useState<'upcoming' | 'past'>('upcoming');
+  const { data } = useSuspenseQuery(bookingQuery())
   const navigate = useNavigate();
-
-  const userQuery = () => queryOptions({
-    queryKey: ['user'],
-    queryFn: async () => {
-      const token = getAccessToken()
-      const res = await fetch(`http://localhost:8080/api/v1/bookings/mybook`, 
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': token,
-        },
-      })
-      if (!res.ok) {navigate({to: "/login"}); }
-      return res.json()
-    },
-  })
-
-  const { data } = useSuspenseQuery(userQuery())
 
 
   const mutation = useMutation({
     mutationFn: async (bid:number) => {
-      const res = await fetch(`http://localhost:8080/api/v1/bookings/${bid}/cancel`, {
+      const res = await fetch(`${url}/api/v1/bookings/${bid}/cancel`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -56,6 +65,7 @@ function RouteComponent() {
     },
     onSuccess: () => {
       alert('cancel successful!');
+      navigate({to:"/my-bookings"})
     },
     onError: (err) => {
       console.error('Booking failed:', err);

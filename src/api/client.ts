@@ -1,7 +1,9 @@
-import { getAccessToken, clearAccessToken } from '@/auth'
-import { queryClient } from '@/queryClient' 
+import { getAccessToken, clearAccessToken } from '@/utils/utils'
+import { queryClient } from '@/queryClient'
+import { useNavigate } from '@tanstack/react-router' 
 
-//const API_BASE = import.meta.env.VITE_API_URL
+
+const urli = import.meta.env.VITE_API_URL
 
 async function handleResponse(res: Response) {
   const text = await res.text().catch(() => '')
@@ -21,7 +23,7 @@ export async function apiFetch(input: RequestInfo, init?: RequestInit) {
   headers.set('Content-Type', headers.get('Content-Type') ?? 'application/json')
   if (token) headers.set('Authorization', `Bearer ${token}`)
 
-  const url = String(input).startsWith('http') ? input : `https://bookit-backend-d4l7.onrender.com${String(input)}`
+  const url = String(input).startsWith('http') ? input : `${urli}${String(input)}`
   const res = await fetch(url, { ...init, headers })
 
   if (res.status === 401) {
@@ -35,15 +37,14 @@ export async function apiFetch(input: RequestInfo, init?: RequestInit) {
 }
 
 export async function loginApi(email: string, password: string) {
-  const res = await fetch(`https://bookit-backend-d4l7.onrender.com/api/v1/users/login`, {
+  const res = await fetch(`${urli}/api/v1/users/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({'email': email, 'password': password }),
   })
   if (!res.ok) {
-      const err = await res.json().catch(() => ({}))
-      if (res.status === 400) throw new Error ("Error 400")
-      throw new Error(err.message || 'Failed to log in')
+      const err = await res.json()
+      throw new Error(err.data || 'Failed to log in')
   }
 
 
@@ -52,5 +53,5 @@ export async function loginApi(email: string, password: string) {
 
 export async function logoutLocal() {
   clearAccessToken()
-  try { queryClient?.clear() } catch {}
+  try { queryClient?.clear()} catch {}
 }

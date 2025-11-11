@@ -5,66 +5,53 @@ import { Users, ArrowLeft } from 'lucide-react';
 import Header from '@/components/Header';
 import { queryOptions, useSuspenseQuery, useMutation } from '@tanstack/react-query'
 import Placeholder from '@/visuals/placeholder.jpg'
-import { getAccessToken } from '@/auth';
+import { getAccessToken } from '@/utils/utils';
+import { useAuth } from '@/auth/AuthProvider';
+import UnauthorizedHandling from '@/components/UnauthorizedHandling';
 
+const url = import.meta.env.VITE_API_URL
 
+  const facilityQuery = (id: string) => queryOptions({
+    queryKey: ['facility', id],
+    queryFn: async ({ signal }: { signal?: AbortSignal }) => {
+      const token = getAccessToken()
+      const res = await fetch(`${url}/api/v1/facilities/${id}`, {
+        method: 'GET',
+        signal,
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': token,
+        },
+      })
+      if (!res.ok) {
+        const err = await res.json()
+        throw new Error(err.message)
+      }
+      return res.json()
+    },
+  })
 
-
-const facilityQuery = (id: string) => queryOptions({
-  queryKey: ['facility', id],
-  queryFn: async ({ signal }: { signal?: AbortSignal }) => {
-    const token = getAccessToken()
-    const res = await fetch(`https://bookit-backend-d4l7.onrender.com/api/v1/facilities/${id}`, {
-      method: 'GET',
-      signal,
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token,
-      },
-    })
-    if (!res.ok) {
-      throw new Error('Facility not found')
-    }
-    return res.json()
-  },
-})
-
-
-const userQuery = () => queryOptions({
-  queryKey: ['user'],
-  queryFn: async () => {
-    const token = getAccessToken()
-    const res = await fetch(`https://bookit-backend-d4l7.onrender.com/api/v1/users`, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': token,
-      },
-    })
-    if (!res.ok) throw new Error('Unauthorized')
-    return res.json()
-  },
-})
 
 export const Route = createFileRoute('/facilities/$id')({
   component: RouteComponent,
   loader: ({ context, params }) => {
     return context.queryClient.ensureQueryData(facilityQuery(params.id))
   },
+  errorComponent: ({}) => (
+    <UnauthorizedHandling />
+  ),
 })
 
 function RouteComponent() {
   const { id } = Route.useParams()
   const { data } = useSuspenseQuery(facilityQuery(id))
-  const user = useSuspenseQuery(userQuery())
+  const {isAuthenticated} = useAuth()
 
   const [selectedDay, setSelectedDay] = useState('');
   const [selectedSlotId, setSelectedSlotId] = useState<number | null>(null);
   const navigate = useNavigate();
 
-  if(data.status === 401 || data.status === 400){
-    navigate({to:"/login"})
-  }
+  if(!isAuthenticated) return navigate({to: "/login"})
 
   const groupedByDay = data.BookingSlots.reduce((acc: Record<string, any[]>, slot:any) => {
     const date = new Date(slot.start_time).toISOString().split('T')[0];
@@ -82,7 +69,7 @@ function RouteComponent() {
   
 const mutation = useMutation({
   mutationFn: async ({ bookingslotId, totalPrice }: { bookingslotId: number; totalPrice: number }) => {
-    const res = await fetch(`http://localhost:8080/api/v1/bookings/create`, {
+    const res = await fetch(`${url}/api/v1/bookings/create`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -91,7 +78,7 @@ const mutation = useMutation({
       body: JSON.stringify({ 'booking_slot_id':bookingslotId, 'total_price':totalPrice }),
     });
 
-    const text = await res.text(); // debug raw response
+    const text = await res.text();
     try {
       return JSON.parse(text);
     } catch {
@@ -100,6 +87,7 @@ const mutation = useMutation({
   },
   onSuccess: () => {
     alert('Booking successful!');
+    navigate({to: "/my-bookings"})
   },
   onError: (err) => {
     console.error('Booking failed:', err);
@@ -120,7 +108,7 @@ const mutation = useMutation({
 
   return (
     <div className="min-h-screen bg-background">
-      <Header isAdmin={user?.data?.isAdmin} />
+      <Header isAdmin={false} />
 
       <div className="container mx-auto px-4 py-8">
         <i className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground mb-6">

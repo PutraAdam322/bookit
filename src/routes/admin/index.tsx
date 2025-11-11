@@ -1,181 +1,46 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { Calendar, Building2, Users, Clock, CheckCircle, XCircle, AlertCircle } from 'lucide-react';
 import Header from '@/components/Header';
 import BookingCard from '@/components/BookingCard';
 import type { Booking } from '@/interface/interface';
+import { getAccessToken } from '@/utils/utils';
+import { queryOptions, useSuspenseQuery } from '@tanstack/react-query';
+import UnauthorizedHandling from '@/components/UnauthorizedHandling';
 
-const STATS = [
-  {
-    title: 'Total Venues',
-    value: '12',
-    change: '+2 this month',
-    icon: Building2,
-    color: 'text-blue-600',
-    bgColor: 'bg-blue-100 dark:bg-blue-950',
-  },
-  {
-    title: 'Total Bookings',
-    value: '248',
-    change: '+18% from last month',
-    icon: Calendar,
-    color: 'text-green-600',
-    bgColor: 'bg-green-100 dark:bg-green-950',
-  },
-  {
-    title: 'Pending Requests',
-    value: '7',
-    change: 'Requires attention',
-    icon: Clock,
-    color: 'text-yellow-600',
-    bgColor: 'bg-yellow-100 dark:bg-yellow-950',
-  },
-  {
-    title: 'Active Users',
-    value: '156',
-    change: '+12% this month',
-    icon: Users,
-    color: 'text-purple-600',
-    bgColor: 'bg-purple-100 dark:bg-purple-950',
-  },
-];
+const url = import.meta.env.VITE_API_URL
 
-const RECENT_BOOKINGS: Booking[] = [
-  {
-    ID: 1,
-    CreatedAt: "2024-03-17T08:00:00.000Z",
-    UpdatedAt: "2024-03-17T08:00:00.000Z",
-    DeletedAt: null,
-    id: 1,
-    total_price: 150.0,
-    status: "pending",
-    user_id: 101,
-    booking_slot_id: 201,
-    booking_slot: {
-      ID: 201,
-      CreatedAt: "2024-03-01T00:00:00.000Z",
-      UpdatedAt: "2024-03-01T00:00:00.000Z",
-      DeletedAt: null,
-      id: 201,
-      facility_id: 301,
-      start_time: "2024-03-17T14:00:00.000Z",
-      end_time: "2024-03-17T16:00:00.000Z",
-      is_available: false,
-      facility: {
-        ID: 301,
-        CreatedAt: "2023-12-01T00:00:00.000Z",
-        UpdatedAt: "2024-01-01T00:00:00.000Z",
-        DeletedAt: null,
-        id: 301,
-        name: "Grand Conference Hall",
-        price: 150,
-        capacity: 60,
-        available: true,
+const bookingQuery = () => queryOptions({
+  queryKey: ['bookings'],
+  queryFn: async () => {
+    const token = getAccessToken()
+    const res = await fetch(`${url}/api/v1/bookings/admin/bookings`, 
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token,
       },
-    },
-    user: {
-      ID: 101,
-      CreatedAt: "2022-05-10T00:00:00.000Z",
-      UpdatedAt: "2024-02-15T00:00:00.000Z",
-      DeletedAt: null,
-      id: 101,
-      name: "John Doe",
-      email: "john.doe@example.com",
-    },
-    showActions: true,
+    })
+    if (!res.ok) {
+      const err = await res.json()
+      throw new Error(err.message)
+    }
+    return res.json()
   },
-  {
-    ID: 2,
-    CreatedAt: "2024-03-18T01:00:00.000Z",
-    UpdatedAt: "2024-03-18T01:00:00.000Z",
-    DeletedAt: null,
-    id: 2,
-    total_price: 80.0,
-    status: "pending",
-    user_id: 102,
-    booking_slot_id: 202,
-    booking_slot: {
-      ID: 202,
-      CreatedAt: "2024-03-02T00:00:00.000Z",
-      UpdatedAt: "2024-03-02T00:00:00.000Z",
-      DeletedAt: null,
-      id: 202,
-      facility_id: 302,
-      start_time: "2024-03-18T10:00:00.000Z",
-      end_time: "2024-03-18T12:00:00.000Z",
-      is_available: false,
-      facility: {
-        ID: 302,
-        CreatedAt: "2023-12-05T00:00:00.000Z",
-        UpdatedAt: "2024-02-10T00:00:00.000Z",
-        DeletedAt: null,
-        id: 302,
-        name: "Executive Meeting Room",
-        price: 80,
-        capacity: 20,
-        available: true,
-      },
-    },
-    user: {
-      ID: 102,
-      CreatedAt: "2023-06-20T00:00:00.000Z",
-      UpdatedAt: "2024-02-20T00:00:00.000Z",
-      DeletedAt: null,
-      id: 102,
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-    },
-    showActions: true,
-  },
-  {
-    ID: 3,
-    CreatedAt: "2024-03-20T02:00:00.000Z",
-    UpdatedAt: "2024-03-20T02:00:00.000Z",
-    DeletedAt: null,
-    id: 3,
-    total_price: 120.0,
-    status: "pending",
-    user_id: 103,
-    booking_slot_id: 203,
-    booking_slot: {
-      ID: 203,
-      CreatedAt: "2024-03-03T00:00:00.000Z",
-      UpdatedAt: "2024-03-03T00:00:00.000Z",
-      DeletedAt: null,
-      id: 203,
-      facility_id: 303,
-      start_time: "2024-03-20T13:00:00.000Z",
-      end_time: "2024-03-20T17:00:00.000Z",
-      is_available: false,
-      facility: {
-        ID: 303,
-        CreatedAt: "2023-11-10T00:00:00.000Z",
-        UpdatedAt: "2024-01-15T00:00:00.000Z",
-        DeletedAt: null,
-        id: 303,
-        name: "Training Room Alpha",
-        price: 120,
-        capacity: 40,
-        available: true,
-      },
-    },
-    user: {
-      ID: 103,
-      CreatedAt: "2021-09-01T00:00:00.000Z",
-      UpdatedAt: "2024-02-01T00:00:00.000Z",
-      DeletedAt: null,
-      id: 103,
-      name: "Michael Lee",
-      email: "michael.lee@example.com",
-    },
-    showActions: true,
-  },
-];
+})
 
 export const Route = createFileRoute('/admin/')({
   component: RouteComponent,
+  loader: ({context}) => {
+    return context.queryClient.ensureQueryData(bookingQuery())
+  },
+  errorComponent: ({}) => (
+    <UnauthorizedHandling />
+  ),
 })
 
 function RouteComponent() {
+  const { data } = useSuspenseQuery(bookingQuery())
+
   const handleApprove = (id: number) => {
     alert(`Approving booking ${id}`);
   };
@@ -207,10 +72,10 @@ function RouteComponent() {
                 </div>
               </div>
               <div className="p-6 pt-0 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                {RECENT_BOOKINGS.map((booking) => (
+                {data.data.map((b: Booking) => (
                   <BookingCard
-                    key={booking.id}
-                    {...booking}
+                    key={b.id}
+                    {...b}
                     showActions={true}
                     onApprove={handleApprove}
                     onReject={handleReject}
