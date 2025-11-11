@@ -1,21 +1,6 @@
 import { Calendar, Clock, Users } from 'lucide-react';
 import type { BookingSlot, Booking } from '@/interface/interface';
-import { getAccessToken } from '@/auth';
 
-/*interface BookingCardProps {
-  id: string;
-  venueName: string;
-  date: string;
-  startTime: string;
-  endTime: string;
-  location: string;
-  attendees: number;
-  status: 'pending' | 'confirmed' | 'cancelled';
-  showActions?: boolean;
-  onCancel?: (id: string) => void;
-  onApprove?: (id: string) => void;
-  onReject?: (id: string) => void;
-}*/
 const getTime = (datetime:string) => {
   const [, tmp] = datetime.split("T");
   const [h, ] = tmp.split("+");
@@ -29,7 +14,7 @@ const getDate = (datetime:string) => {
 }
 
 export default function BookingCard({
-booking_slot, status, showActions, onApprove, onCancel, onReject, id}: Booking) {
+booking_slot, status, showActions, onCancel, id}: Booking) {
   const statusColors = {
     pending: 'bg-yellow-500/10 text-yellow-700 dark:text-yellow-400',
     confirmed: 'bg-green-500/10 text-green-700 dark:text-green-400',
@@ -75,24 +60,7 @@ booking_slot, status, showActions, onApprove, onCancel, onReject, id}: Booking) 
         </div>
 
         {showActions && (
-          <div className="flex gap-2 mt-4">
-            {/*status === 'pending' && onApprove && onReject && (
-              <>
-                <button
-                  className="flex-1 px-3 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity"
-                  //onClick={() => onApprove(id)}
-                >
-                  Approve
-                </button>
-                <button
-                  className="flex-1 px-3 py-2 bg-destructive text-destructive-foreground rounded-lg hover:opacity-90 transition-opacity"
-                  //onClick={() => onReject(id)}
-                >
-                  Reject
-                </button>
-              </>
-            )*/}
-            
+          <div className="flex gap-2 mt-4">        
             {status === 'confirmed' && onCancel && (
               <button
                 className="w-full px-3 py-2 border border-border rounded-lg hover:bg-accent transition-colors"

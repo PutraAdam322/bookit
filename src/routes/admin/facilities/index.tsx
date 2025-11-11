@@ -1,8 +1,10 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useSuspenseQuery, queryOptions } from '@tanstack/react-query';
 import { Building2 } from 'lucide-react';
 import Header from '@/components/Header';
 import VenueCard from '@/components/VenueCard';
+
+const url = import.meta.env.VITE_API_URL
 
 export const Route = createFileRoute('/admin/facilities/')({
   component: RouteComponent,
@@ -11,7 +13,7 @@ export const Route = createFileRoute('/admin/facilities/')({
 const facilitiesQuery = queryOptions({
   queryKey: ['facilities'],
   queryFn: async () => {
-    const res = await fetch('https://bookit-backend-d4l7.onrender.com/api/v1/facilities', {
+    const res = await fetch(`${url}/api/v1/facilities`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -28,6 +30,9 @@ const facilitiesQuery = queryOptions({
 })
 
 function RouteComponent() {
+
+  const navigate = useNavigate()
+  
   const { data } = useSuspenseQuery(facilitiesQuery)
 
   return(
@@ -42,31 +47,31 @@ function RouteComponent() {
             </p>
           </div>
           <i>
-            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2">
+            <button className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition-opacity flex items-center gap-2" onClick={() => navigate({to: '/admin/facilities/create'})}>
               <Building2 className="h-4 w-4" />
               Add New Venue
             </button>
           </i>
         </div>
         <div className="grid grid-cols-1 gap-6">
-                  <div>
-                    <div className="rounded-lg border border-border bg-card">
-                      <div className="p-6 pb-4">
-                        <div className="flex items-center justify-between">
-                          <h3>All Facilities</h3>
-                        </div>
-                        <div className="mb-4 text-sm text-muted-foreground">
-                          Showing {data.length} venues
-                        </div>
-                        <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                          {data.map((d: any) => (
-                            <VenueCard key={d.id} {...d} />
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+          <div>
+            <div className="rounded-lg border border-border bg-card">
+              <div className="p-6 pb-4">
+                <div className="flex items-center justify-between">
+                  <h3>All Facilities</h3>
                 </div>
+                <div className="mb-4 text-sm text-muted-foreground">
+                  Showing {data.length} venues
+                </div>
+                <div className="p-6 pt-0 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {data.map((d: any) => (
+                    <VenueCard key={d.id} {...d} />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );

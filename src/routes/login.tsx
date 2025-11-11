@@ -3,7 +3,7 @@ import { useMutation } from '@tanstack/react-query';
 import { Building2 } from 'lucide-react';
 import { loginApi } from '@/api/client';
 import { queryClient } from '@/queryClient';
-import { setAccessToken } from '@/auth';
+import { setAccessToken } from '@/utils/utils';
 
 
 export const Route = createFileRoute('/login')({
@@ -23,9 +23,6 @@ function RouteComponent() {
       try { queryClient.invalidateQueries() } catch {}
       navigate({ to: '/' })
     },
-    onError: () => {
-      navigate({to: "/login"})
-    }
   })
   
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -61,7 +58,7 @@ function RouteComponent() {
                 name='email'
                 placeholder="you@example.com"
                 required
-                className="w-full px-3 py-2 rounded-lg border border-border bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-input-background focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-gray-400"
               />
             </div>
             
@@ -78,7 +75,7 @@ function RouteComponent() {
                 name='password'
                 placeholder="••••••••"
                 required
-                className="w-full px-3 py-2 rounded-lg border border-border bg-input-background focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full px-3 py-2 rounded-lg border border-border bg-input-background focus:outline-none focus:ring-2 focus:ring-ring placeholder:text-gray-400"
               />
             </div>
             

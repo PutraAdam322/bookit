@@ -4,14 +4,14 @@ import Header from '@/components/Header';
 import VenueCard from '@/components/VenueCard';
 import { Search, SlidersHorizontal, X } from 'lucide-react';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
-import { getAccessToken } from '@/auth';
+import { getAccessToken } from '@/utils/utils';
 
-
+const url = import.meta.env.VITE_API_URL
 
 const facilitiesQuery = queryOptions({
   queryKey: ['facilities'],
   queryFn: async () => {
-    const res = await fetch('https://bookit-backend-d4l7.onrender.com/api/v1/facilities', {
+    const res = await fetch(`${url}/api/v1/facilities`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -21,7 +21,7 @@ const facilitiesQuery = queryOptions({
     const body = await res.json().catch(() => null)
 
     if (Array.isArray(body)) return body
-    if (!body) return [] // no body
+    if (!body) return []
 
     return body.data ?? body.facilities ?? body.items ?? body.results ?? []
   },
@@ -33,9 +33,9 @@ const userQuery = () => queryOptions({
   queryFn: async () => {
     const token = getAccessToken()
 
-    if (!token) return null
+    if (token != "") return null
 
-    const res = await fetch(`https://bookit-backend-d4l7.onrender.com/api/v1/users`, {
+    const res = await fetch(`${url}/api/v1/users`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -44,7 +44,6 @@ const userQuery = () => queryOptions({
     })
     return res.json()
   },
-  enabled: !!getAccessToken(),
 })
 
 export const Route = createFileRoute('/facilities/')({

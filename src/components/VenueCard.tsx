@@ -64,7 +64,7 @@ export default function VenueCard({
                 : 'bg-muted text-muted-foreground cursor-not-allowed'
             }`}
             disabled={!available}
-            onClick={() => navigate({to: `/facilities/${id}`})}
+            onClick={() => locationPath === '/admin/facilities'  ? navigate({to: `/admin/facilities/${id}`}) : navigate({to: `/facilities/${id}`})}
           >
             {locationPath === '/admin/facilities' ? 'Edit' : (available ? 'View Details' : 'Unavailable')}
           </button>

@@ -10,6 +10,12 @@ export interface Facility {
   available?: boolean;
 }
 
+export interface Response<T> {
+  message: string;
+  data: T;
+}
+
+
 export interface BookingSlot {
   ID: number;
   CreatedAt: string;
