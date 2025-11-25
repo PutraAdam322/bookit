@@ -1,6 +1,6 @@
 import { StrictMode } from 'react'
 import ReactDOM from 'react-dom/client'
-import { RouterProvider, createRouter } from '@tanstack/react-router'
+import { RouterProvider, createRouter, createHashHistory } from '@tanstack/react-router'
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClient } from './queryClient'
 import { AuthProvider } from '@/auth/AuthProvider.tsx'
@@ -12,9 +12,12 @@ import { routeTree } from './routeTree.gen'
 import './styles.css'
 import reportWebVitals from './reportWebVitals.ts'
 
+const hashHistory = createHashHistory();
+
 // Create a new router instance
 const router = createRouter({
   routeTree,
+  history: hashHistory,
   context: {queryClient},
   defaultPreload: 'intent',
   scrollRestoration: true,
