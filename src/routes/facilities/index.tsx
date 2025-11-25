@@ -2,7 +2,7 @@ import { createFileRoute } from '@tanstack/react-router'
 import { useState } from 'react';
 import Header from '@/components/Header';
 import VenueCard from '@/components/VenueCard';
-import { Search, SlidersHorizontal, X } from 'lucide-react';
+import { Search } from 'lucide-react';
 import { queryOptions, useSuspenseQuery } from '@tanstack/react-query'
 import { getAccessToken } from '@/utils/utils';
 

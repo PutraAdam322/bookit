@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { useMutation } from "@tanstack/react-query";
-import { getAccessToken } from "@/utils/utils";
+//import { useMutation } from "@tanstack/react-query";
+//import { getAccessToken } from "@/utils/utils";
 
-const url = import.meta.env.VITE_API_URL
+//const url = import.meta.env.VITE_API_URL
 
 export interface FacilityFormValues {
   name: string;
@@ -25,7 +25,7 @@ export interface FacilityFormProps {
 
 const FacilityForm = () => {
 
-    const mutation = useMutation({
+    /*const mutation = useMutation({
         mutationFn: async ({ bookingslotId, totalPrice }: { bookingslotId: number; totalPrice: number }) => {
             const res = await fetch(`${url}/api/v1/facilities/create`, {
             method: 'POST',
@@ -50,7 +50,7 @@ const FacilityForm = () => {
             console.error('Booking failed:', err);
             alert('Booking failed: ' + err.message);
         },
-    })
+    })*/
 
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
@@ -61,6 +61,7 @@ const FacilityForm = () => {
 
     const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    //mutation.mutate({})
     alert('Venue added successfully!');
     navigate({to:'/admin/facilities'});
     };

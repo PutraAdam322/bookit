@@ -1,5 +1,5 @@
 import { Calendar, Clock, Users } from 'lucide-react';
-import type { BookingSlot, Booking } from '@/interface/interface';
+import type { Booking } from '@/interface/interface';
 
 const getTime = (datetime:string) => {
   const [, tmp] = datetime.split("T");

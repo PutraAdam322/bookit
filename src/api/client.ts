@@ -1,6 +1,5 @@
 import { getAccessToken, clearAccessToken } from '@/utils/utils'
 import { queryClient } from '@/queryClient'
-import { useNavigate } from '@tanstack/react-router' 
 
 
 const urli = import.meta.env.VITE_API_URL
